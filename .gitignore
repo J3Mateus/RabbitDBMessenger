@@ -1,0 +1,40 @@
+# Ignore Node.js build and runtime directories
+node_modules/
+dist/
+
+# Ignore environment-specific files
+.env
+.env.local
+.env.*.local
+
+# Ignore TypeScript build artifacts
+*.tsbuildinfo
+
+# Ignore npm lock file
+package-lock.json
+
+# Ignore Yarn lock file
+yarn.lock
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+
+# Ignore log files
+*.log
+
+# Ignore compiled JavaScript files
+*.js
+
+# Ignore build-related config files
+tsconfig.tsbuildinfo
+
+# Ignore coverage reports
+coverage/
+
+# Ignore user-specific files
+.npmrc
+yarn-error.log
+
+# Ignore any generated files
+build/
