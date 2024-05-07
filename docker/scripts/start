@@ -1,0 +1,8 @@
+#!/bin/sh
+
+nginx -c /etc/nginx/nginx.conf
+
+cd src/app/api 
+ls
+yarn install
+node index.js

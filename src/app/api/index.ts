@@ -9,19 +9,24 @@ import APIDIContainer from '@dicontainer/api';
 import DatabaseConnection from '@postgres/postgresRepository';
 import { InstallationType } from '@utils/enum';
 import { ConsumeMessage } from 'amqplib';
+import path from 'path';
 
 dotenv.config();
-app.use(express.static('public'));
+const port = process.env.PORT_API || 3000
+const urls_cors = process.env.CORS?.replace(/\s/g, '').split(',');
+const publicFolderPath = process.env.PROD === 'true' ?  path.join(__dirname, '..', '..', '..', 'public') : 'public';
+
+app.use(express.static(publicFolderPath));
 app.use(cors({
-    origin:['http://localhost:3000']
+    origin:urls_cors
 }))
 
 app.use(express.json())
 app.use("/api", loadRoutes());
 
 
-app.listen(3001,() => {
-    console.log("API is running on port 3001!");
+app.listen(port,() => {
+    console.log(`API is running on port ${port}!`);
 })
 
 const dicontainer = new APIDIContainer();
@@ -48,7 +53,7 @@ const processMessage = async (msg: ConsumeMessage | null) => {
         const firmware = await getFirmware(DTO['firmware_id'], DTO['user_id']);
         await setupEnvironment();
         
-        const sketchPath = `${process.cwd()}/public/sketchs/${firmware.name}-${firmware.version}`;
+        const sketchPath = `${publicFolderPath}/media/sketchs/${firmware.name}-${firmware.version}`;
         
         await generateSketch(firmware, sketchPath);
         const url_path = await compileAndSaveSketch(firmware, sketchPath);
@@ -93,7 +98,7 @@ const generateSketch = async (firmware: any, sketchPath: string) => {
 const compileAndSaveSketch = async (firmware: any, sketchPath: string) => {
     const result = await systemService.compileSketch(
         `${sketchPath}/${firmware.name}-${firmware.version}.ino`,
-        `${process.cwd()}/public/bins/${firmware.name}-${firmware.version}`
+        `${publicFolderPath}/bins/${firmware.name}-${firmware.version}`
     );
 
     if ( result){

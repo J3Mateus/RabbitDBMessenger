@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  rabbitmq-app:
+    container_name: api-${DOCKER_PROJECT_NAME}
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    command: /start-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - ${DOCKER_PORT}:3001
+    volumes:
+        - ${DOCKER_VOLUME_DOCKER}:/docker
+        - ./logs:/code/logs
+    networks:
+      - connection_message_queue
+
+  rabbitmq:
+    container_name: rabbitmq
+    ports:
+      - "8080:15672"
+      - "5672:5672"
+      - "25676:25676"
+    image: rabbitmq:3-management
+    restart: always
+    networks:
+      - connection_message_queue
+    depends_on:
+      - rabbitmq-app
+
+networks:
+  connection_message_queue:
+    external: true

@@ -25,6 +25,9 @@ class RabbitMQRepository implements RabbitMQAdapter  {
     async start(): Promise<Channel>{
         this._connection = await connect(this._client);
         this._channel = await this._connection.createChannel();
+        this._channel.assertQueue("build",{
+            durable:true
+        })
         return this._channel;
     }
 
